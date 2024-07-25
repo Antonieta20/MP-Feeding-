@@ -1,0 +1,21 @@
+*R Packages used:* 
+library(cowplot)
+library(car)
+library(lme4)# for statistical analyses using LMER and GLMER
+library(multcomp) # for statistical testing
+library(car) # check model fits visually using qqplot
+library(reshape2)
+library(tidyverse) # to easily clean data
+library(performance) # check model fits statistically
+library(ggplot2)
+library(viridis)
+library(ggpubr)
+library(rstatix) # check model fits statistically
+library(report)
+library(ragg)
+library(DT)
+library(skimr)
+library(lubridate)
+library(here)
+library(seacarb) # to calculate buoyant weight of corals into dry weight of corals
+library(patchwork)
