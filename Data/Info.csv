@@ -1,0 +1,73 @@
+ID,Species,colony,treatment,tank
+A-T1-2,Pve,A,MP + HF,1
+B-T1-2,Pve,B,MP + HF,1
+C-T1-2,Pve,C,MP + HF,1
+D-T1-2,Pve,D,MP + HF,1
+A-T6-2,Pve,A,MP + HF,6
+B-T6-2,Pve,B,MP + HF,6
+C-T6-2,Pve,C,MP + HF,6
+D-T6-2,Pve,D,MP + HF,6
+A-T11-2,Pve,A,MP + HF,11
+B-T11-2,Pve,B,MP + HF,11
+C-T11-2,Pve,C,MP + HF,11
+D-T11-2,Pve,D,MP + HF,11
+A-T1,Spi,A,MP + HF,1
+B-T1,Spi,B,MP + HF,1
+C-T1,Spi,C,MP + HF,1
+D-T1,Spi,D,MP + HF,1
+A-T6,Spi,A,MP + HF,6
+B-T6,Spi,B,MP + HF,6
+C-T6,Spi,C,MP + HF,6
+D-T6,Spi,D,MP + HF,6
+A-T11,Spi,A,MP + HF,11
+B-T11,Spi,B,MP + HF,11
+C-T11,Spi,C,MP + HF,11
+D-T11,Spi,D,MP + HF,11
+A-T4-2,Pve,A,MP,4
+B-T4-2,Pve,B,MP,4
+C-T4-2,Pve,C,MP,4
+D-T4-2,Pve,D,MP,4
+A-T9-2,Pve,A,MP,9
+B-T9-2,Pve,B,MP,9
+C-T9-2,Pve,C,MP,9
+D-T9-2,Pve,D,MP,9
+A-T14-2,Pve,A,MP,14
+B-T14-2,Pve,B,MP,14
+C-T14-2,Pve,C,MP,14
+D-T14-2,Pve,D,MP,14
+A-T4,Spi,A,MP,4
+B-T4,Spi,B,MP,4
+C-T4,Spi,C,MP,4
+D-T4,Spi,D,MP,4
+A-T9,Spi,A,MP,9
+B-T9,Spi,B,MP,9
+C-T9,Spi,C,MP,9
+D-T9,Spi,D,MP,9
+A-T14,Spi,A,MP,14
+B-T14,Spi,B,MP,14
+C-T14,Spi,C,MP,14
+D-T14,Spi,D,MP,14
+A-T5-2,Pve,A,Control,5
+B-T5-2,Pve,B,Control,5
+C-T5-2,Pve,C,Control,5
+D-T5-2,Pve,D,Control,5
+A-T10-2,Pve,A,Control,10
+B-T10-2,Pve,B,Control,10
+C-T10-2,Pve,C,Control,10
+D-T10-2,Pve,D,Control,10
+A-T15-2,Pve,A,Control,15
+B-T15-2,Pve,B,Control,15
+C-T15-2,Pve,C,Control,15
+D-T15-2,Pve,D,Control,15
+A-T5,Spi,A,Control,5
+B-T5,Spi,B,Control,5
+C-T5,Spi,C,Control,5
+D-T5,Spi,D,Control,5
+A-T10,Spi,A,Control,10
+B-T10,Spi,B,Control,10
+C-T10,Spi,C,Control,10
+D-T10,Spi,D,Control,10
+A-T15,Spi,A,Control,15
+B-T15,Spi,B,Control,15
+C-T15,Spi,C,Control,15
+D-T15,Spi,D,Control,15
