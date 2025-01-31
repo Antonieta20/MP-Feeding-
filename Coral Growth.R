@@ -3,26 +3,19 @@
 # Entire Data analysis related to the Coral Growth
 
 ## Upload data tables -------------------------------------------------------
-
 # Read table with infos to IDs, tanks, colonies and treatments
-
 tab_info <- read.csv2("Data/info.csv",sep=";", dec=".",header=T) %>% 
   na.omit() %>% 
-
 tab_info$treatment <- factor(tab_info$treatment, 
                              levels = c("Control", "MP+HF", "MP"))
-
 # read buoyant weight data
-
 tab_size <- read.csv2("Data/3D_Scanning_Data_Table.csv",sep=";", dec=".",header=T) %>% 
   na.omit() %>% 
   select(ID, Volume_t0, Surface_t0, Volume_t1, Surface_t1)
 
 # Read buoyant weight data
-
 tab_calcification <- read.csv2("Data/Weight_Data Table.csv",sep=";", 
-                    dec=".",header=T) %>% 
-  na.omit()
+                    dec=".",header=T) %>% na.omit()
 
 tab_calcification <-  merge(tab_calcification, tab_size, by="ID",
                             all = TRUE)
@@ -34,10 +27,10 @@ tab_calcification <-  merge(tab_calcification, tab_size, by="ID",
 # and salinity at the timepoints and a skeletal density of 2,93 g/cm³. 
 # Then we use the photosynthetically active surface area at t1 (first measurement,
 # actually corresponding to t0), after removing the necrotic areas from the 
-# model (column surface_t1). The results are stated as mg/cm².
+# model (column surface_t1). The results are stated as mg/cm² 
+# according to the method of Jokiel et al. 1978 and Davies 1989
 
 # Calculate and standardize
-
 skeleton_weight <- function(buoyant_weight, S, T, P = 0, 
                             rho_aragonite = 2930){
   
@@ -50,50 +43,36 @@ skeleton_weight <- function(buoyant_weight, S, T, P = 0,
 tab_calcification$weight_t0 <- skeleton_weight(tab_calcification$weight_.T0, S=34.3, T=23.8, P = 0, rho_aragonite = 2930)
 tab_calcification$weight_t1 <- skeleton_weight(tab_calcification$weight_.T1, S=33, T=24.8, P = 0, rho_aragonite = 2930)
 
-
 tab_calcification <- tab_calcification %>% 
   mutate(calcification = (((weight_.T1-weight_.T0)*1000)/(Surface_t1/100)))
 
-
 write.table(tab_calcification, sep = ";", "Output/Tab_calcification_processed.csv")
-
 
 ## Data processing for growth in surface area and volume  ---------------
 # Here we calculate the growth in surface area (%) and volume (cm³ per cm²) 
 # of the coral colony.
 
 # Calculate growth in surface area (%)
-
 tab_size$growth_surf <- ((100/tab_size$Surface_t0)*tab_size$Surface_t1)-100
 
 # Growth in volume (cm² per cm³)
-
 tab_size$growth_vol <- (tab_size$Volume_t1 - tab_size$Volume_t0)/1000/(tab_size$Surface_t0/100)
-
 str(tab_size)
-
 tab_growth <- merge(tab_info, tab_size, by = "ID", all = TRUE)
 
 write.table(tab_growth, sep = ";", "Output/Tab_growth_processed.csv")
 
 ## Means Buoyant weight ---------------------------------------------------
-
 # Calcification mean
 
 calcification_means <- tab_calcification %>% 
-  
   drop_na() %>%
-  
   group_by(Species, treatment) %>% summarize(calcification_means = mean(calcification))
-
 calcification_means
 
 # Calcification sd
-
 calcification_sd <- tab_calcification %>% 
-  
   drop_na() %>%
-  
   group_by( Species) %>% summarize(calcification_sd = sd(calcification))
 
 calcification_sd
@@ -104,7 +83,6 @@ calcification_sd
 # timepoints of the experiment.
 
 # Descriptive statistics
-
 ### Check Outlier
 ### Check data for (extreme) outliers.
 
@@ -150,7 +128,6 @@ datatable(summy_1, caption = "Table 5: Descriptive summary
 ### Linear mixed effects models 
 
 ### Results for P. verrucosa
-
 model_calcification_Pve <- tab_calcification %>% 
   filter(Species=="Pve") %>% 
   lmer(scale(calcification)~treatment + (1|colony), data=.)
@@ -161,7 +138,6 @@ check_normality(model_calcification_Pve)
 check_heteroscedasticity(model_calcification_Pve)
 
 #### Check_model(model_calcification_Pve)
-
 result <- tidy(glht(model_calcification_Pve, 
 linfct = mcp(treatment = "Tukey"))) %>%  add_significance
 ("adj.p.value")
@@ -172,7 +148,6 @@ write.table(result, sep = ";",
             "Output/Tab_Result_Lmem_calcification_Pve.csv")
 
 # Results for S. pistillata
-
 model_calcification_Spi <- tab_calcification %>% 
   filter(Species=="Spi") %>% 
   lmer(sqrt(scale(calcification))~treatment + (1|colony), data=.)
@@ -238,7 +213,6 @@ summy_1 <- tab_growth %>%
   group_by(Species, treatment) %>%
   get_summary_stats(growth_surf)  # package: rstatix
 
-
 #skim_2
 datatable(summy_1, caption = "Table 5: Descriptive summary 
           statistics of surface growth (%)")
@@ -248,12 +222,10 @@ summy_2 <- tab_growth %>%
   group_by(Species, treatment) %>%
   get_summary_stats(growth_vol)  # package: rstatix
 
-
 #skim_2
 
 datatable(summy_2, caption = "Table 6: Descriptive summary 
           statistics of volume growth (cm³ per cm²)")
-
 
 ## Test null hypotheses of Surface and Volume  ------------------------------------------------
 
@@ -262,7 +234,6 @@ datatable(summy_2, caption = "Table 6: Descriptive summary
 # Linear mixed effects models 
 
 ###Results for P. verrucosa
-
 model_surface_Pve <- tab_growth %>% 
   filter(Species=="Pve") %>% 
   lmer(scale(growth_surf)~treatment + (1|colony), data=.)
@@ -272,17 +243,14 @@ model_surface_Pve <- tab_growth %>%
 check_normality(model_surface_Pve)
 check_heteroscedasticity(model_surface_Pve)
 
-
 result <- tidy(glht(model_surface_Pve, linfct = mcp(treatment = "Tukey"))) %>%  add_significance("adj.p.value")
 
 result
 
 write.table(result, sep = ";", "Output/Tab_Result_Lmem_Surface_Pve.csv")
 
-
 # Linear mixed effects models 
 ###Results for S. pistillata
-
 model_surface_Spi <- tab_growth %>% 
   filter(Species=="Spi") %>% 
   lmer(scale(growth_surf)~treatment + (1|colony), data=.)
@@ -297,7 +265,6 @@ result <- tidy(glht(model_surface_Spi, linfct = mcp(treatment = "Tukey"))) %>%  
 result
 
 write.table(result, sep = ";", "Output/Tab_Result_Lmem_surface_spi.csv")
-
 
 #Volume 
 
@@ -345,7 +312,6 @@ write.table(result, sep = ";", "Output/Tab_Result_Lmem_volume_spi.csv")
 
 species.labs <- c("P. verrucosa", "S. pistillata")
 names(species.labs) <- c("Pve", "Spi")
-
 
 #Plots 
 
