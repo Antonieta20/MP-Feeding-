@@ -2,39 +2,29 @@
 ## Coral Photosynthesis and Respiration ---------------------------------
 # Entire Data analysis related to the photosymbiont response
       
-
 ## Upload data tables ---------------------------------------------------
 
 # Read table with infos to IDs, tanks, colonies and treatments
-
 tab_info <- read.csv2("Data/info.csv",sep=";", dec=".",header=T) %>% 
-
-
 tab_info$treatment <- factor(tab_info$treatment, 
                              levels = c("Control", "MP + HF", "MP"))
 
 # Read scanning data
-
 tab_size <- read.csv2("Data/3D_Scanning_Data_Table.csv",sep=";", dec=".",header=T) %>% 
   na.omit() %>% 
   select(ID, Volume_t0, Surface_t0, Volume_t1, Surface_t1)
 
 # Read oxygen incubation data
-
 tab_incubations <- read.csv("Data/Incubations_Data_Table.csv",sep=";", dec=".",header=T) %>% 
    na.omit() %>% 
  
-
 tab_incubations <-merge(tab_incubations, tab_size, by="ID", all = TRUE)
 
-
 # Read PAM data
-
 tab_PAM <- read.csv("Data/PAM_Data table.csv",sep=";", dec=".",header=T) %>% 
   rename(ID = Sample, Species = Spi) %>% 
   select(c(-t, -Time, -No, -ML, -ETR, -Tank_info, -X, -X.1)) %>% 
   na.omit()  
-
 names(tab_PAM)
 
 ## Data processing for Photosynthesis rates -------------
@@ -65,7 +55,6 @@ tab_incubations <- tab_incubations %>%
          light_O2_perL = light_diff/waterVolume_t1*1000,
          dark_O2_perL = dark_diff/waterVolume_t1*1000)
 
-
 #Calculate means from control incubations separated by 
 #light and dark incubation    
 
@@ -89,7 +78,6 @@ control_rates_dark <-
 
 control <- merge(control_rates_light, control_rates_dark, by="day", all = TRUE)
 
-
 # Clean datatable
 
 tab_psrate <- tab_incubations %>% 
@@ -97,7 +85,6 @@ tab_psrate <- tab_incubations %>%
   select(ID, sampling_point, day, position_glass, Surface_t1, light_O2_perL, dark_O2_perL)
 
 # Add controls as row behind data from fragments
-
 tab_psrate <- merge(tab_psrate, control, by="day", all = TRUE)
 
 
@@ -117,7 +104,6 @@ tab_psrate <- tab_psrate %>%
 tab_psrate <- merge(tab_info, tab_psrate, by = "ID", all = TRUE)
 
 write.table(tab_psrate, sep = ";", "Output/Tab_photosynthesisrates_processed.csv")
-
 
 ## Data processing for PAM data -----------------------------------------
 #Here we calculate the means from all light measurements
@@ -139,7 +125,6 @@ tab_dark <-
 
 str(tab_dark)
 
-
 write.table(tab_light_mean, sep = ";", "Output/Tab_PAMlight_processed.csv")
 datatable(tab_light_mean, caption = "Table 3: Effective quantum yield (Y(II)).")  
 
@@ -155,7 +140,6 @@ datatable(tab_dark, caption = "Table 4: Maximum quantum yield (Fv/Fm).")
 # Descriptive statistics
 
 ### Check Outliers
-
 
 outliers_net_ps <- tab_psrate %>%
   drop_na() %>%
@@ -188,7 +172,6 @@ outliers_gross_ps
 
 outliers_gross_ps$ID
 
-
 tab_psrate <- tab_psrate %>%
   filter(ID != c("B-T1-2", "A-T9-2", "B-T1", "B-T5"))
 ### All removed from the biginin (during the upload tables)
@@ -203,7 +186,6 @@ summy_1 <- tab_psrate %>%
   filter(sampling_point=="T1") %>% 
   group_by(Species, treatment) %>%
   get_summary_stats(net_ps, respiration, gross_ps) 
-
 
 #skim_1
 datatable(summy_1, caption = "Table 5: 
@@ -234,7 +216,6 @@ net_ps_means <- tab_psrate %>%
 #or removed, so go back here and check again if this is correct. 
 #We find significant differences (p.adjusted <0.05) for both 
 #species.
-
 
 # Null hypothesis -T1 -----------------------------------------------------
 ### All analysis of T1 (at the end of 6 weeks)
@@ -327,7 +308,6 @@ model_gross_ps_Spi <- tidy(glht(model_gross_ps_Spi,
 
 model_gross_ps_Spi_Result <- model_gross_ps_Spi
 
-
 model_gross_ps_Spi_Result
 
 # Null hypothesis - T0 Baseline -------------------------------------------
@@ -348,12 +328,10 @@ model_net_ps_Pve_T0 <- tab_psrate %>%
 check_normality(model_net_ps_Pve_T0)
 check_heteroscedasticity(model_net_ps_Pve_T0)
 
-
 model_net_ps_Pve_T0_result <- tidy(glht(model_net_ps_Pve_T0, linfct = mcp(treatment = "Tukey"))) %>%  
   add_significance("adj.p.value")
 
 model_net_ps_Pve_T0_result
-
 
 write.table(model_net_ps_Pve_T0_result, sep = ";", "Output/Tab_Result_Lmem_net_ps_Pve_T0.csv")
 
@@ -369,7 +347,6 @@ model_respiration_Pve_T0 <- tab_psrate %>%
 check_normality(model_respiration_Pve_T0)
 check_heteroscedasticity(model_respiration_Pve_T0)
 
-
 model_RES_Pve_T0_result <- tidy(glht(model_respiration_Pve_T0, linfct = mcp(treatment = "Tukey"))) %>%  add_significance("adj.p.value")
 
 model_RES_Pve_T0_result
@@ -384,11 +361,9 @@ model_gross_ps_Pve_T0 <- tab_psrate %>%
   filter(Species=="Pve", sampling_point=="T0") %>% 
   lmer((log(scale(gross_ps)))~treatment + (1|colony), data=.)
 
-
 # Check Model
 check_normality(model_gross_ps_Pve_T0)
 check_heteroscedasticity(model_gross_ps_Pve_T0)
-
 
 model_gross_ps_Pve_T0 <- tidy(glht(model_gross_ps_Pve_T0, linfct = mcp(treatment = "Tukey"))) %>%  add_significance("adj.p.value")
 
@@ -411,16 +386,13 @@ model_net_ps_Spi_T0 <- tab_psrate %>%
 check_normality(model_net_ps_Spi_T0)
 check_heteroscedasticity(model_net_ps_Spi_T0)
 
-
 model_net_ps_Spi_T0_result <- tidy(glht(model_net_ps_Spi_T0, linfct = mcp(treatment = "Tukey"))) %>%  add_significance("adj.p.value")
 
 model_net_ps_Spi_T0_result
 
-
 write.table(model_net_ps_Spi_T0_result, sep = ";", "Output/Tab_Result_Lmem_net_ps_Spi_T0.csv")
 
 #Respiration Spi / T0 Baseline
-
 
 model_respiration_Spi_T0 <- tab_psrate %>% 
   filter(Species=="Spi", sampling_point=="T0") %>% 
@@ -429,7 +401,6 @@ model_respiration_Spi_T0 <- tab_psrate %>%
 # Check Model
 check_normality(model_respiration_Spi_T0)
 check_heteroscedasticity(model_respiration_Spi_T0)
-
 
 model_RES_Spi_T0_result <- tidy(glht(model_respiration_Spi_T0, linfct = mcp(treatment = "Tukey"))) %>%  add_significance("adj.p.value")
 
@@ -452,7 +423,6 @@ check_heteroscedasticity(model_gross_ps_Spi_T0)
 model_gross_ps_Spi_T0 <- tidy(glht(model_gross_ps_Spi_T0, linfct = mcp(treatment = "Tukey"))) %>%  add_significance("adj.p.value")
 
 model_gross_ps_Spi_Result_T0 <- model_gross_ps_Spi_T0
-
 
 model_gross_ps_Spi_Result_T0
 
@@ -508,7 +478,6 @@ summy_1 <- tab_dark %>%
   drop_na() %>%
   group_by(Species, Treatment) %>%
   get_summary_stats(FvFm) 
-
 
 #skim_1
 datatable(summy_1, caption = "Table 6: 
@@ -655,7 +624,6 @@ model_FvFm_Spi_T0 <- tab_dark %>%
 check_normality(model_FvFm_Spi_T0)
 check_heteroscedasticity(model_FvFm_Spi_T0)
 
-
 model_FvFm_Spi_Result_T0 <- tidy(glht(model_FvFm_Spi_T0, linfct = mcp(Treatment = "Tukey"))) %>%  add_significance("adj.p.value")
 
 model_FvFm_Spi_Result_T0
@@ -684,7 +652,6 @@ levels(tab_dark$Treatment)
 tab_dark$Treatment = factor( tab_dark$Treatment, levels=c("Control", "MPsallphases", "MPs+Food" ))
 levels(tab_dark$Treatment)
 
-
 #Plots 
 
 #x labels 
@@ -711,21 +678,16 @@ y <- c(90,90,90)
 yend <- c(90,90,90)
 Species <- Species <- c("P. verrucosa", "P. verrucosa", "S. pistillata" )
 
-
 df_segments <- data.frame(x, xend,y,yend, Species)
-
 
 x= c(1.5,2.5,2.5)
 y = c(90,90,90)
 label = c("***", "***","**")
 Species <- Species <- c("P. verrucosa", "P. verrucosa", "S. pistillata" )
 
-
 df_segments_2 <- data.frame(x, y,label, Species)
 
-
 tab_psrate$Species <- ifelse(tab_psrate$Species=="Pve", yes = "P. verrucosa", no = "S. pistillata")#Correr una vez
-
 
 tab_psrate_T1 <- 
   tab_psrate %>% 
@@ -767,8 +729,7 @@ plot_net_ps_Pve <-
   scale_x_discrete(labels=c("", "", ""))
 
 plot(plot_net_ps_Pve)
-  
-  
+    
 #Respiration_Graphic version A
 
 x = c(2,1,2)
@@ -777,19 +738,14 @@ y <- c(46,50,46)
 yend <- c(46,50,46)
 Species <- Species <- c("P. verrucosa", "S. pistillata", "S. pistillata" )
 
-
 df_segments <- data.frame(x, xend,y,yend, Species)
-
 
 x= c(2.5,2,2.5)
 y = c(46,50,46)
 label = c("***", "***","**")
 Species <- Species <- c("P. verrucosa", "S. pistillata", "S. pistillata" )
 
-
 df_segments_2 <- data.frame(x, y,label, Species)
-
-
 
 plot_respiration_Pve <- 
   tab_psrate %>% 
@@ -826,8 +782,6 @@ plot_respiration_Pve <-
 
 plot(plot_respiration_Pve)
 
-
-
 #Gross P_Graphic version A
 
 x = c(1,1,2.1,1,2)
@@ -836,9 +790,7 @@ y <- c(145,138,138,145,138)
 yend <- c(145,138,138,145,138)
 Species <- Species <- c("P. verrucosa", "P. verrucosa", "P. verrucosa", "S. pistillata", "S. pistillata"   )
 
-
 df_segments <- data.frame(x, xend,y,yend, Species)
-
 
 x= c(2,1.5,2.5,2,2.5)
 y = c(145,138,138,145,138)
@@ -846,7 +798,6 @@ label = c("**", "***","***", "*", "***" )
 Species <- Species <- c("P. verrucosa", "P. verrucosa", "P. verrucosa", "S. pistillata" , "S. pistillata"   )
 
 df_segments_2 <- data.frame(x, y,label, Species)
-
 
 plot_gross_ps_Pve <- 
   tab_psrate %>% 
@@ -887,8 +838,6 @@ plot(plot_gross_ps_Pve)
 
 tab_light_mean$Species <- ifelse(tab_light_mean$Species=="Pve", yes = "P. verrucosa", no = "S. pistillata")#Correr una vez
 
-
-
 plot_YII_Pve <- 
   tab_light_mean %>% 
   filter(Date=="T1") %>%
@@ -924,9 +873,7 @@ plot_YII_Pve <-
 
 plot(plot_YII_Pve)
 
-
 #PAM_Graphic version B
-
 
 species.labs <- c("P. verrucosa", "S. pistillata")
 names(species.labs) <- c("Pve", "Spi")
@@ -967,9 +914,7 @@ plot_YII_Pve <-
 
 plot(plot_YII_Pve)
 
-
 #Maximun_Graphic version A
-
 
 x = c(1,1)
 xend = c(2,3)
@@ -977,9 +922,7 @@ y <- c(0.75,0.75)
 yend <- c(0.75,0.75)
 Species <- Species <- c("P. verrucosa", "S. pistillata")
 
-
 df_segments <- data.frame(x, xend,y,yend, Species)
-
 
 x= c(1.5,2)
 y = c(0.75,0.75)
@@ -1032,11 +975,7 @@ summaryplot_PSrate_full <- ggarrange (plot_net_ps_Pve, plot_respiration_Pve, plo
                                       align = "v", #common.legend = FALSE, 
                                       heights= c(1.3,1.3,1.3,1.3,1.4),
                                       ncol=1) 
-
 summaryplot_PSrate_full
-
-
-
 #save plot
 
 ggsave(here ("Output", "summaryplot_PSrate_full_one_colum.png"), 
